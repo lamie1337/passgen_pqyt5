@@ -56,7 +56,7 @@ class welcome_modal(QtWidgets.QWidget):
         self.theme_array = [self.theme_white, self.theme_black, self.theme_green]
 
     def passdef(self):
-        con = sl.connect("settings.sqlite")
+        con = sl.connect("data/settings.sqlite")
         cur = con.cursor()
         if self.inputname.toPlainText() != '':
             text = self.inputname.toPlainText()
@@ -118,17 +118,17 @@ class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
         self.label.move(20, 5)
 
         label1 = QLabel(self)
-        pixmap = QPixmap('Screenshot_1.png')
+        pixmap = QPixmap('data/dataphoto/Screenshot_1.png')
         label1.setPixmap(pixmap)
         label1.move(20, 20)
 
         label2 = QLabel(self)
-        pixmap = QPixmap('Screenshot_2.png')
+        pixmap = QPixmap('data/dataphoto/Screenshot_2.png')
         label2.setPixmap(pixmap)
         label2.move(20, 120)
 
         label3 = QLabel(self)
-        pixmap = QPixmap('Screenshot_3.png')
+        pixmap = QPixmap('data/dataphoto/Screenshot_3.png')
         label3.setPixmap(pixmap)
         label3.move(20, 220)
 
@@ -145,7 +145,7 @@ class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
         self.labals_box.addButton(self.label3_btn)
         self.labals_box_grid = [self.label1_btn, self.label2_btn, self.label3_btn]
 
-        con = sl.connect("settings.sqlite")
+        con = sl.connect("data/settings.sqlite")
         cur = con.cursor()
         res = cur.execute('''SELECT theme FROM settings_table WHERE id = 3''').fetchone()
         if res[0] == 'white':
@@ -171,7 +171,7 @@ class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
             'Введите новое имя:')
         if ok:
             name = str(text)
-            con = sl.connect("settings.sqlite")
+            con = sl.connect("data/settings.sqlite")
             cur = con.cursor()
             cur.execute('''UPDATE settings_table SET text = ? WHERE id = 2''', (name,))
             con.commit()
@@ -179,7 +179,7 @@ class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
 
 
     def savesettings(self):
-        con = sl.connect("settings.sqlite")
+        con = sl.connect("data/settings.sqlite")
         cur = con.cursor()
         if self.label2_btn.isChecked():
             cur.execute('''UPDATE settings_table SET theme = 'white' WHERE id = 3''')
@@ -209,19 +209,19 @@ class MyPillow(QMainWindow):
     def initUI(self):
         #Главное окно
         self.setGeometry(400, 400, 1200, 600)
-        con = sl.connect("settings.sqlite")
+        con = sl.connect("data/settings.sqlite")
         cur = con.cursor()
         res = cur.execute('''SELECT text FROM settings_table WHERE id = 2''').fetchone()
         self.setWindowTitle(f'Generator - {res[0]}')
         theme = cur.execute('''SELECT theme FROM settings_table WHERE id = 3''').fetchone()
         if theme[0] == 'black':
-            oImage = QImage("gray.jpg")
+            oImage = QImage("data/themes/gray.jpg")
             sImage = oImage.scaled(QSize(1200, 600))
             palette = QPalette()
             palette.setBrush(QPalette.Window, QBrush(sImage))
             self.setPalette(palette)
         elif theme[0] == 'green':
-            oImage = QImage("green.jpg")
+            oImage = QImage("data/themes/green.jpg")
             sImage = oImage.scaled(QSize(1200, 600))
             palette = QPalette()
             palette.setBrush(QPalette.Window, QBrush(sImage))
@@ -587,7 +587,7 @@ class MyPillow(QMainWindow):
             e.ignore()
 
 if __name__ == "__main__":
-    con = sl.connect("settings.sqlite")
+    con = sl.connect("data/settings.sqlite")
     cur = con.cursor()
     result = cur.execute("""SELECT parameters FROM settings_table
                 WHERE id = 1""").fetchone()
