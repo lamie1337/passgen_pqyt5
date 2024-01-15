@@ -9,6 +9,7 @@ from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QFileDialog, QPushButton, QDoubleSpinBox, QPlainTextEdit,\
     QCheckBox, QRadioButton, QGridLayout, QButtonGroup, QVBoxLayout, QWidget, QSpinBox, QInputDialog, QStatusBar
 
+
 class welcome_modal(QtWidgets.QWidget):
     def __init__(self):
         super(welcome_modal, self).__init__()
@@ -55,49 +56,6 @@ class welcome_modal(QtWidgets.QWidget):
         self.theme_box.addButton(self.theme_green)
         self.theme_array = [self.theme_white, self.theme_black, self.theme_green]
 
-    def passdef(self):
-        con = sl.connect("data/settings.sqlite")
-        cur = con.cursor()
-        if self.inputname.toPlainText() != '':
-            text = self.inputname.toPlainText()
-            cur.execute("""UPDATE settings_table SET text = ? WHERE id = 2""", (text, ))
-            for i in self.theme_array:
-                if self.theme_white.isChecked():
-                    cur.execute("""UPDATE settings_table SET theme = 'white' WHERE id = 3""")
-                    break
-                elif self.theme_black.isChecked():
-                    cur.execute("""UPDATE settings_table SET theme = 'black' WHERE id = 3""")
-                    break
-                elif self.theme_green.isChecked():
-                    cur.execute("""UPDATE settings_table SET theme = 'green' WHERE id = 3""")
-                    break
-            con.commit()
-            con.close()
-            QWidget.close(self)
-        else:
-            self.showerror()
-
-    def showerror(self):
-        infoBox = QMessageBox()
-        infoBox.setText("Ошибка")
-        infoBox.setInformativeText("Не выбрано ни одного параметра!")
-        infoBox.setWindowTitle("Внимание")
-        infoBox.setStandardButtons(QMessageBox.Ok)
-        infoBox.setIcon(QMessageBox.Critical)
-        infoBox.setWindowIcon(QtGui.QIcon('icon.png'))
-        infoBox.exec_()
-
-
-    def closeEvent(self, e):
-        result = QtWidgets.QMessageBox.question(self, "Продолжить|Закрыть?",
-           "Вы действительно хотите продолжить|закрыть?",
-           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-           QtWidgets.QMessageBox.No)
-        if result == QtWidgets.QMessageBox.Yes:
-            e.accept()
-            QtWidgets.QWidget.closeEvent(self, e)
-        else:
-            e.ignore()
 
 class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
     def __init__(self):
@@ -166,40 +124,6 @@ class Modal(QtWidgets.QWidget): #КЛАСС МОДАЛЬНОГО ОКНА
         con.commit()
         con.close()
 
-    def changenameshowDialog(self):
-        text, ok = QInputDialog.getText(self, 'Input Dialog',
-            'Введите новое имя:')
-        if ok:
-            name = str(text)
-            con = sl.connect("data/settings.sqlite")
-            cur = con.cursor()
-            cur.execute('''UPDATE settings_table SET text = ? WHERE id = 2''', (name,))
-            con.commit()
-            con.close()
-
-
-    def savesettings(self):
-        con = sl.connect("data/settings.sqlite")
-        cur = con.cursor()
-        if self.label2_btn.isChecked():
-            cur.execute('''UPDATE settings_table SET theme = 'white' WHERE id = 3''')
-        elif self.label1_btn.isChecked():
-            cur.execute('''UPDATE settings_table SET theme = 'black' WHERE id = 3''')
-        else:
-            cur.execute('''UPDATE settings_table SET theme = 'green' WHERE id = 3''')
-        con.commit()
-        con.close()
-        self.showsavesettings()
-
-    def showsavesettings(self):
-        infoBox = QMessageBox()
-        infoBox.setText("Сохранение")
-        infoBox.setInformativeText("Изменения вступят в силу после перезапуска")
-        infoBox.setWindowTitle("Внимание")
-        infoBox.setStandardButtons(QMessageBox.Ok)
-        infoBox.setIcon(QMessageBox.Information)
-        infoBox.setWindowIcon(QtGui.QIcon('icon.png'))
-        infoBox.exec_()
 
 class MyPillow(QMainWindow):
     def __init__(self):
@@ -416,6 +340,84 @@ class MyPillow(QMainWindow):
         self.setLayout(self.vbox)
         self.count = 0
 
+    def changenameshowDialog(self):
+        text, ok = QInputDialog.getText(self, 'Input Dialog',
+            'Введите новое имя:')
+        if ok:
+            name = str(text)
+            con = sl.connect("data/settings.sqlite")
+            cur = con.cursor()
+            cur.execute('''UPDATE settings_table SET text = ? WHERE id = 2''', (name,))
+            con.commit()
+            con.close()
+
+
+    def savesettings(self):
+        con = sl.connect("data/settings.sqlite")
+        cur = con.cursor()
+        if self.label2_btn.isChecked():
+            cur.execute('''UPDATE settings_table SET theme = 'white' WHERE id = 3''')
+        elif self.label1_btn.isChecked():
+            cur.execute('''UPDATE settings_table SET theme = 'black' WHERE id = 3''')
+        else:
+            cur.execute('''UPDATE settings_table SET theme = 'green' WHERE id = 3''')
+        con.commit()
+        con.close()
+        self.showsavesettings()
+
+    def showsavesettings(self):
+        infoBox = QMessageBox()
+        infoBox.setText("Сохранение")
+        infoBox.setInformativeText("Изменения вступят в силу после перезапуска")
+        infoBox.setWindowTitle("Внимание")
+        infoBox.setStandardButtons(QMessageBox.Ok)
+        infoBox.setIcon(QMessageBox.Information)
+        infoBox.setWindowIcon(QtGui.QIcon('icon.png'))
+        infoBox.exec_()
+
+    def passdef(self):
+        con = sl.connect("data/settings.sqlite")
+        cur = con.cursor()
+        if self.inputname.toPlainText() != '':
+            text = self.inputname.toPlainText()
+            cur.execute("""UPDATE settings_table SET text = ? WHERE id = 2""", (text, ))
+            for i in self.theme_array:
+                if self.theme_white.isChecked():
+                    cur.execute("""UPDATE settings_table SET theme = 'white' WHERE id = 3""")
+                    break
+                elif self.theme_black.isChecked():
+                    cur.execute("""UPDATE settings_table SET theme = 'black' WHERE id = 3""")
+                    break
+                elif self.theme_green.isChecked():
+                    cur.execute("""UPDATE settings_table SET theme = 'green' WHERE id = 3""")
+                    break
+            con.commit()
+            con.close()
+            QWidget.close(self)
+        else:
+            self.showerror()
+
+    def showerror(self):
+        infoBox = QMessageBox()
+        infoBox.setText("Ошибка")
+        infoBox.setInformativeText("Не выбрано ни одного параметра!")
+        infoBox.setWindowTitle("Внимание")
+        infoBox.setStandardButtons(QMessageBox.Ok)
+        infoBox.setIcon(QMessageBox.Critical)
+        infoBox.setWindowIcon(QtGui.QIcon('icon.png'))
+        infoBox.exec_()
+
+
+    def closeEvent(self, e):
+        result = QtWidgets.QMessageBox.question(self, "Продолжить|Закрыть?",
+           "Вы действительно хотите продолжить|закрыть?",
+           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+           QtWidgets.QMessageBox.No)
+        if result == QtWidgets.QMessageBox.Yes:
+            e.accept()
+            QtWidgets.QWidget.closeEvent(self, e)
+        else:
+            e.ignore()
     def _on_radio_button_clicked(self, button):
         print(button)
         self.label.setText('Current: ' + button.text())
